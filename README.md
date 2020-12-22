@@ -1,4 +1,4 @@
-# PubTator-Parser
+# The PubTator Parsing Tool
 A Python package for loading and manipulating PubTator files as Python objects.
 
 ##Usage
@@ -15,7 +15,7 @@ For wordpiece tokenization and full ability to encode and decode text for use wi
 ```python
 from pubtatortool import PubTatorCorpus
 from pubtatortool.tokenization import get_tokenizer
-tokenizer = get_tokenizer(tokenization='wordpiece', vocabulary='bert-base-cased')
+tokenizer = get_tokenizer(tokenization='wordpiece', vocab='bert-base-cased')
 train_corpus = PubTatorCorpus(['train_corpus_part_1.txt',
                                'train_corpus_part_2.txt'], tokenizer)
 dev_corpus = PubTatorCorpus(['--dev_corpus.txt'], tokenizer)
@@ -28,13 +28,14 @@ For example, you can create a TSV-formatted file from a PubTator file in 10 line
 ```python
 from pubtatortool import PubTatorCorpus
 from pubtatortool.tokenization import get_tokenizer
-tokenizer = get_tokenizer(tokenization='wordpiece', vocabulary='bert-base-cased')
+tokenizer = get_tokenizer(tokenization='wordpiece', vocab='bert-base-cased')
 corpus = PubTatorCorpus(['mycorpus.txt'], tokenizer)
-doc = corpus.document_list[0]
 with open('outfile.txt', 'w') as outfile:
-    for sentence in doc.sentences:
-        for token, label in zip(sentence, sentence_targets)
-            print("{tok}\t{lab}".format(tok=token, lab=label), file='outfile')
-        print('', file=outfile)
+    for doc in corpus.document_list:
+        for sentence, targets in zip(doc.sentences, doc.sentence_targets()):
+            for token, label in zip(sentence, targets):
+                print("{tok}\t{lab}".format(tok=token, lab=label),
+                      file='outfile')
+            print('', file=outfile)
 ```
 
