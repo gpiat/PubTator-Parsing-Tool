@@ -35,7 +35,7 @@ with open('outfile.txt', 'w') as outfile:
         for sentence, targets in zip(doc.sentences, doc.sentence_targets()):
             for token, label in zip(sentence, targets):
                 print("{tok}\t{lab}".format(tok=token, lab=label),
-                      file='outfile')
+                      file=outfile)
             print('', file=outfile)
 ```
 
