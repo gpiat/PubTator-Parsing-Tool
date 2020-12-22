@@ -140,14 +140,14 @@ class WordTokenizer(BaseTokenizer):
         return detok_txt
 
 
-def get_tokenizer(tokenization, vocab_fname):
+def get_tokenizer(tokenization, vocab):
     if type(tokenization) == str:
         tokenization = TokenType.from_str(tokenization)
     if tokenization == TokenType.CHAR:
-        return CharTokenizer(vocab_fname)
+        return CharTokenizer(vocab)
     elif tokenization == TokenType.WP:
-        tok = BertTokenizer.from_pretrained(vocab_fname)
+        tok = BertTokenizer.from_pretrained(vocab)
         tok.tokenization = TokenType.WP
         return tok
     else:
-        return WordTokenizer(vocab_fname)
+        return WordTokenizer(vocab)

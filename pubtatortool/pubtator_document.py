@@ -80,11 +80,15 @@ class PubTatorDocument:
         self.raw_text = self.title + '\n' + self.abstract
         self.umls_entities = [UMLS_Entity(entity) for entity in mentions]
 
-        sentence_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+        try:
+            sentence_tok = nltk.data.load('tokenizers/punkt/english.pickle')
+        except LookupError:
+            nltk.download('punkt')
+            sentence_tok = nltk.data.load('tokenizers/punkt/english.pickle')
         self.tokenizer = tokenizer
         self.sentences = self.raw_text.split('\n')
         # self.sentences is now of the form ['Title', 'Abstract. Stuff.']
-        self.sentences.extend(sentence_tokenizer.tokenize(self.sentences[1]))
+        self.sentences.extend(sentence_tok.tokenize(self.sentences[1]))
         # self.sentences is now of the form
         # ['Title', 'Abstract. Stuff.', 'Abstract.', 'Stuff.']
         del self.sentences[1]
