@@ -1,7 +1,7 @@
 # The PubTator Parsing Tool
 A Python package for loading and manipulating PubTator files as Python objects.
 
-##Usage
+## Usage
 For basic word tokenization and simple operations
 ```python
 from pubtatortool import PubTatorCorpus
