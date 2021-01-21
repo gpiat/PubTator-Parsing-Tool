@@ -47,21 +47,22 @@ class PubTatorDocument:
     """ This class instantiates a document from the PubTator corpus
         using the information provided in the PubTator format.
         Attr:
-            pmid (str): PMID of the document
-            title (str): Title of the article
             abstract (str): Abstract of the article
-            text (list<str>): title fused with abstract but as a list of tokens
-            umls_entities (list<UMLS_Entity>): list of UMLS entity
-                mentions in the text
+            char_level_targets
+            pmid (str): PMID of the document
             raw_text (str): simple concatenation of title and abstract. The
                 indexing of characters in raw_text matches the one used in
                 PubTator entity mention annotations.
-            tokenizer
             sentences
-            tokenization
             start_end_indices
-            char_level_targets
             targets
+            text (list<str>): title fused with abstract but as a list of tokens
+            title (str): Title of the article
+            token_to_char_lookup
+            tokenization
+            tokenizer
+            umls_entities (list<UMLS_Entity>): list of UMLS entity
+                mentions in the text
             vocab
     """
 
@@ -145,8 +146,10 @@ class PubTatorDocument:
         # diff = list(itertools.chain(*[zip([a] * len(b), b)
         #                               for a, b in diff]))
         #
-        # actually we dont need to keep the character, further dividing
-        # execution time by 2
+        # In actuality, once we have a sequence of numbers that tell us
+        # whether a character comes from one string, the other or both, the
+        # character itself is redundant information. Removing it from
+        # consideration further divides execution time by 2.
         diff = list(itertools.chain(*[[flag] * len(sub_str)
                                       for flag, sub_str in diff]))
 
@@ -161,6 +164,9 @@ class PubTatorDocument:
         # why it needs to start at -1 rather than 0, it just works.
         current_char_index = -1
         current_token_index = 0
+        # we maintain a lookup table of tokens to characters for the purpose
+        # of versatility.
+        self.token_to_char_lookup = {current_token_index: []}
         for flag in diff:
             # hypothetically, we can choose any time to assign the
             # token's label but we choose to do so when we're on the
@@ -169,17 +175,24 @@ class PubTatorDocument:
                 token_targets[current_token_index] =\
                     char_level_targets[current_char_index]
                 current_token_index += 1
+                # We also add the current token to the lookup table
+                self.token_to_char_lookup[current_token_index] = []
                 chars_left_in_current_token = len(next(token))
             # we're pointing to the same character in both the
             # raw_text and the tokenized text, so update both
             # pointers for the next iteration
             if flag == 0:
                 current_char_index += 1
+                # we add the current character index to the lookup table
+                self.token_to_char_lookup[current_token_index].append(
+                    current_char_index)
                 chars_left_in_current_token -= 1
             # we're on a character missing in the tokenized text,
             # so we skip it
             elif flag == -1:
                 current_char_index += 1
+                # we do not add the current character index to the lookup
+                # table, since it is not in the tokens
             # we're on a character missing in the raw_text, so we skip it
             else:
                 chars_left_in_current_token -= 1
