@@ -18,8 +18,8 @@ from pubtatortool.tokenization import get_tokenizer
 tokenizer = get_tokenizer(tokenization='wordpiece', vocab='bert-base-cased')
 train_corpus = PubTatorCorpus(['train_corpus_part_1.txt',
                                'train_corpus_part_2.txt'], tokenizer)
-dev_corpus = PubTatorCorpus(['--dev_corpus.txt'], tokenizer)
-test_corpus = PubTatorCorpus(['--test_corpus.txt'], tokenizer)
+dev_corpus = PubTatorCorpus(['dev_corpus.txt'], tokenizer)
+test_corpus = PubTatorCorpus(['test_corpus.txt'], tokenizer)
 ```
 
 You can then serialize a corpus using Pickle, iterate over documents using `corpus.document_list`, and perform various operations on documents regardless of tokenization policy, even if it is lossy, without worrying about mention and text decoupling.
