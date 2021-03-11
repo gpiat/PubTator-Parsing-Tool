@@ -1,6 +1,9 @@
 # The PubTator Parsing Tool
 A Python package for loading and manipulating PubTator files as Python objects.
 
+## Installation
+This package is on the Python Package Index. You can install it using `pip install pubtatortool`.
+
 ## Usage
 For basic word tokenization and simple operations
 ```python
