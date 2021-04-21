@@ -32,10 +32,14 @@ class UMLS_Entity:
 
     def __init__(self, text):
         self._orig_text = text
+        # The first field that is ignored is the PMID of the document.
         (_, self.start_idx, self.stop_idx, self.mention_text,
-         self.semantic_type_ID, self.concept_ID) = text.split('\t')
+         self.semantic_type_ID, self.cui) = text.split('\t')
 
-        self.concept_ID = self.concept_ID[6:]
+        # The CUI may be formatted as "C0123456" or "UMLS:C0123456".
+        # We want to chop off the "UMLS:" if applicable.
+        self.cui = self.cui.split(':')[-1]
+
         self.start_idx = int(self.start_idx)
         self.stop_idx = int(self.stop_idx)
 
@@ -114,7 +118,7 @@ class PubTatorDocument:
         for i in range(len(char_level_targets)):
             for e in self.umls_entities:
                 if i >= e.start_idx and i < e.stop_idx:
-                    char_level_targets[i] = e.concept_ID, e.semantic_type_ID
+                    char_level_targets[i] = e.cui, e.semantic_type_ID
                     continue
                 elif i > e.stop_idx:
                     continue
