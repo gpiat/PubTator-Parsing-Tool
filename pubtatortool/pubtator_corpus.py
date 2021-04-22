@@ -21,6 +21,20 @@ class PubTatorCorpus:
     """ This class instantiates a PubTator corpus using one or more
         PubTator-formatted files. Its main purpose is to iterate over
         documents with the documents() generator function.
+        Attributes:
+            tokenizer: A tokenizer that implements a `tokenize()`
+                method and has a `tokenization` attribute of type
+                `tokenization_tools.TokenType`.
+            tokenization: a TokenType (the same as its tokenizer)
+            n_documents: The number of documents in the corpus
+            document_list: a list containing all of the documents as
+                PubTatorDocument objects.
+            cuids: a dict with all of the CUIs that appear in the corpus
+                as keys, and their number of occurences as values
+            stids: a dict with all of the STIs that appear in the corpus
+                as keys, and their number of occurences as values
+            vocab: a set of all tokens used in the corpus
+            nconcepts: total number of CUIs in the corpus.
     """
 
     def __init__(self, fnames, tokenizer=None):
@@ -37,10 +51,7 @@ class PubTatorCorpus:
         self._filenames = fnames
         self._currentfile = 0
 
-        if tokenizer is not None:
-            self.tokenizer = tokenizer
-        else:
-            self.tokenizer = WordTokenizer(None)
+        self.tokenizer = tokenizer or WordTokenizer(None)
         self.tokenization = tokenizer.tokenization
         self._init_documents()
         self.n_documents = len(self.document_list)
