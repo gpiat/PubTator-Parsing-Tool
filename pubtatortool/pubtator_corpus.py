@@ -40,7 +40,7 @@ class PubTatorCorpus:
         if tokenizer is not None:
             self.tokenizer = tokenizer
         else:
-            self.tokenizer = WordTokenizer()
+            self.tokenizer = WordTokenizer(None)
         self.tokenization = tokenizer.tokenization
         self._init_documents()
         self.n_documents = len(self.document_list)
