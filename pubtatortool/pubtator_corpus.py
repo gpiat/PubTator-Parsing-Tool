@@ -70,10 +70,10 @@ class PubTatorCorpus:
         vocab = set()
         for document in self.document_list:
             for entity in document.umls_entities:
-                if entity.concept_ID in cuids:
-                    cuids[entity.concept_ID] += 1
+                if entity.cui in cuids:
+                    cuids[entity.cui] += 1
                 else:
-                    cuids[entity.concept_ID] = 1
+                    cuids[entity.cui] = 1
                 if entity.semantic_type_ID in stids:
                     stids[entity.semantic_type_ID] += 1
                 else:
