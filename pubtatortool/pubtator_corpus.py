@@ -52,7 +52,7 @@ class PubTatorCorpus:
         self._currentfile = 0
 
         self.tokenizer = tokenizer or WordTokenizer(None)
-        self.tokenization = tokenizer.tokenization
+        self.tokenization = self.tokenizer.tokenization
         self._init_documents()
         self.n_documents = len(self.document_list)
 
