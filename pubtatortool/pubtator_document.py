@@ -57,7 +57,11 @@ class PubTatorDocument:
             raw_text (str): simple concatenation of title and abstract. The
                 indexing of characters in raw_text matches the one used in
                 PubTator entity mention annotations.
-            sentences
+            sentences (list<list<str>>): List of sentences, each being a list
+                of tokens.
+            sent_start_end_indices (list<(int, int)>): List of
+                (start_index, end_index) pairs for each sentence (the index
+                refers to the character indices in the original text string)
             start_end_indices
             targets
             text (list<str>): title fused with abstract but as a list of tokens
@@ -91,6 +95,8 @@ class PubTatorDocument:
             nltk.download('punkt')
             sentence_tok = nltk.data.load('tokenizers/punkt/english.pickle')
         self.tokenizer = tokenizer
+        self.sent_start_end_indices = list(
+            sentence_tok.span_tokenize(self.raw_text))
         self.sentences = self.raw_text.split('\n')
         # self.sentences is now of the form ['Title', 'Abstract. Stuff.']
         self.sentences.extend(sentence_tok.tokenize(self.sentences[1]))
