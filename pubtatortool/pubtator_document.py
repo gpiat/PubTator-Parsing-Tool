@@ -103,7 +103,7 @@ class PubTatorDocument:
         # the sentence tokenizer does not recognize. Therefore we manually
         # split the first sentence span.
         span1_start, span2_end = self.sent_start_end_indices[0]
-        newline = raw_text.index('\n')
+        newline = self.raw_text.index('\n')
         self.sent_start_end_indices = [
             (span1_start, newline),
             (newline + 1, span2_end)] +\
