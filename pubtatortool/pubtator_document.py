@@ -88,22 +88,29 @@ class PubTatorDocument:
         # with PubTator PubTator format.
         self.raw_text = self.title + '\n' + self.abstract
         self.umls_entities = [UMLS_Entity(entity) for entity in mentions]
+        self.tokenizer = tokenizer
 
         try:
             sentence_tok = nltk.data.load('tokenizers/punkt/english.pickle')
         except LookupError:
             nltk.download('punkt')
             sentence_tok = nltk.data.load('tokenizers/punkt/english.pickle')
-        self.tokenizer = tokenizer
+
+        # We get a list of (start_idx, end_idx) pairs for each sentence
         self.sent_start_end_indices = list(
             sentence_tok.span_tokenize(self.raw_text))
-        self.sentences = self.raw_text.split('\n')
-        # self.sentences is now of the form ['Title', 'Abstract. Stuff.']
-        self.sentences.extend(sentence_tok.tokenize(self.sentences[1]))
-        # self.sentences is now of the form
-        # ['Title', 'Abstract. Stuff.', 'Abstract.', 'Stuff.']
-        del self.sentences[1]
-        # self.sentences is now of the form ['Title', 'Abstract.', 'Stuff.']
+        # the first sentence delimeter is \n at the end of the title, which
+        # the sentence tokenizer does not recognize. Therefore we manually
+        # split the first sentence span.
+        span1_start, span2_end = self.sent_start_end_indices[0]
+        newline = raw_text.index('\n')
+        self.sent_start_end_indices = [
+            (span1_start, newline),
+            (newline + 1, span2_end)] +\
+            self.sent_start_end_indices[1:]
+
+        self.sentences = [self.title]
+        self.sentences.extend(sentence_tok.tokenize(self.abstract))
         self.sentences = [self.tokenizer.tokenize(sentence)
                           for sentence in self.sentences]
         # for example, if tokenization is wordpiece, self.sentences is now
