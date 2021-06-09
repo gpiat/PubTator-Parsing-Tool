@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="pubtatortool",
-    version="0.6.4",
+    version="0.6.5",
     author="Guilhem Piat",
     author_email="guilhem.piat@protonmail.com",
     description="A package for loading and manipulating PubTator files "
