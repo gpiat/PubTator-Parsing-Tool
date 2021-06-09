@@ -100,17 +100,25 @@ class PubTatorDocument:
         self.sent_start_end_indices = list(
             sentence_tok.span_tokenize(self.raw_text))
 
-        # the \n at the end of the title is a sentence delimeter which
-        # the sentence tokenizer does not recognize. Therefore we manually
-        # split the appropriate span if need be.
+        # The \n at the end of the title is the first sentence delimeter.
+        # The sentence tokenizer does not recognize this and may split the
+        # title into several sentences (which is reasonable in theory as a
+        # title can have multiple sentences but usually these are phrases
+        # which aren't grammatically complete sentences). Therefore we
+        # manually split the appropriate span.
         newline = self.raw_text.index('\n')
+        first_span = (0, newline)
         for i, (start, end) in enumerate(self.sent_start_end_indices):
-            if start < newline + 1 < end:
-                self.sent_start_end_indices = (
-                    self.sent_start_end_indices[:i] +
-                    [(start, newline),
-                    (newline + 1, end)] +
-                    self.sent_start_end_indices[i + 1:])
+            if end > newline:
+                if start > newline:
+                    self.sent_start_end_indices = (
+                        [first_span] +
+                        self.sent_start_end_indices[i:])
+                if start <= newline:
+                    self.sent_start_end_indices = (
+                        [first_span,
+                        (newline + 1, end)] +
+                        self.sent_start_end_indices[i + 1:])
                 break
 
         self.sentences = [self.title]
